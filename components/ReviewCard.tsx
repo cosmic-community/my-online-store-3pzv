@@ -7,7 +7,12 @@ interface ReviewCardProps {
 }
 
 export default function ReviewCard({ review, showProduct = false }: ReviewCardProps) {
-  const rating = review.metadata?.rating ?? 0;
+  // Changed: Extract numeric rating from select-dropdown object {key, value}
+  const rawRating = review.metadata?.rating;
+  const rating = typeof rawRating === 'object' && rawRating !== null
+    ? Number((rawRating as { key: string; value: string }).value) || 0
+    : Number(rawRating) || 0;
+
   const reviewerName = review.metadata?.reviewer_name || 'Anonymous';
   const reviewBody = review.metadata?.review_body || '';
   const verifiedPurchase = review.metadata?.verified_purchase;

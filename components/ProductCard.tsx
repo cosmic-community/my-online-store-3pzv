@@ -13,6 +13,11 @@ export default function ProductCard({ product, averageRating, reviewCount }: Pro
   const inventoryStatus = product.metadata?.inventory_status;
   const category = product.metadata?.category;
 
+  // Changed: Extract the display value from the select-dropdown object
+  const inventoryLabel = typeof inventoryStatus === 'object' && inventoryStatus !== null
+    ? (inventoryStatus as { key: string; value: string }).value
+    : (inventoryStatus as string | undefined);
+
   const statusColor = (status: string | undefined): string => {
     switch (status) {
       case 'In Stock':
@@ -49,9 +54,10 @@ export default function ProductCard({ product, averageRating, reviewCount }: Pro
             </svg>
           </div>
         )}
-        {inventoryStatus && (
-          <span className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full ${statusColor(inventoryStatus)}`}>
-            {inventoryStatus}
+        {/* Changed: Render inventoryLabel string instead of inventoryStatus object */}
+        {inventoryLabel && (
+          <span className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full ${statusColor(inventoryLabel)}`}>
+            {inventoryLabel}
           </span>
         )}
       </div>

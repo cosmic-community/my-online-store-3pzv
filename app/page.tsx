@@ -16,11 +16,16 @@ export default async function HomePage() {
   const ratingsByProduct: Record<string, { total: number; count: number }> = {};
   for (const review of reviews) {
     const productId = review.metadata?.product?.id;
-    if (productId && review.metadata?.rating) {
+    // Changed: Extract numeric rating from select-dropdown object {key, value}
+    const rawRating = review.metadata?.rating;
+    const numericRating = typeof rawRating === 'object' && rawRating !== null
+      ? Number((rawRating as { key: string; value: string }).value) || 0
+      : Number(rawRating) || 0;
+    if (productId && numericRating > 0) {
       if (!ratingsByProduct[productId]) {
         ratingsByProduct[productId] = { total: 0, count: 0 };
       }
-      ratingsByProduct[productId].total += review.metadata.rating;
+      ratingsByProduct[productId].total += numericRating;
       ratingsByProduct[productId].count += 1;
     }
   }
